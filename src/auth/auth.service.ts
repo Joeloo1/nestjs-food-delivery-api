@@ -28,7 +28,9 @@ export class AuthService {
 
   async login(user: User, res: Response) {
     const { accessToken, refreshToken } = this.generateTokens(user);
+
     await this.storeRefreshToken(user.id, refreshToken);
+
     this.setRefreshCookie(res, refreshToken);
 
     return {
@@ -48,7 +50,9 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string, res: Response) {
-    const refreshSecret = this.configService.get<string>('config.JWT_REFRESH_SECRET');
+    const refreshSecret = this.configService.get<string>(
+      'config.JWT_REFRESH_SECRET',
+    );
 
     let payload: { sub: string };
     try {
@@ -67,7 +71,8 @@ export class AuthService {
       throw new UnauthorizedException('Access denied');
     }
 
-    const { accessToken, refreshToken: newRefreshToken } = this.generateTokens(user);
+    const { accessToken, refreshToken: newRefreshToken } =
+      this.generateTokens(user);
     await this.storeRefreshToken(user.id, newRefreshToken);
     this.setRefreshCookie(res, newRefreshToken);
 
@@ -85,21 +90,27 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('config.JWT_SECRET'),
-      expiresIn: (this.configService.get<string>('config.JWT_EXPIRES_IN') ?? '15m') as any,
+      expiresIn: (this.configService.get<string>('config.JWT_EXPIRES_IN') ??
+        '15m') as any,
     });
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
       {
         secret: this.configService.get<string>('config.JWT_REFRESH_SECRET'),
-        expiresIn: (this.configService.get<string>('config.JWT_REFRESH_EXPIRES_IN') ?? '7d') as any,
+        expiresIn: (this.configService.get<string>(
+          'config.JWT_REFRESH_EXPIRES_IN',
+        ) ?? '7d') as any,
       },
     );
 
     return { accessToken, refreshToken };
   }
 
-  private async storeRefreshToken(userId: string, token: string): Promise<void> {
+  private async storeRefreshToken(
+    userId: string,
+    token: string,
+  ): Promise<void> {
     const saltRounds = Number(process.env.SALT_ROUNDS) || 10;
     const hashed = await bcrypt.hash(token, saltRounds);
     await this.usersService.updateRefreshToken(userId, hashed);

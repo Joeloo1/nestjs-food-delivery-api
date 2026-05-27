@@ -16,14 +16,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.database'),
 
-          // Auto-load all entities decorated with @Entity()
           autoLoadEntities: true,
 
-          // synchronize: true auto-creates tables from your entities.
-          // ONLY in development — never in production (use migrations instead).
-          synchronize: process.env.NODE_ENV !== 'production',
+          // In dev you can keep synchronize on while building features, but
+          // once you generate your first migration switch this to false so
+          // the app and the CLI stay in sync.
+          synchronize: false,
 
-          // Logs every SQL query — useful for understanding what TypeORM does
+          // Path to compiled migration files (dist/ because NestJS runs JS)
+          migrations: ['dist/database/migrations/*.js'],
+
+          // Run pending migrations automatically on startup
+          migrationsRun: true,
+
           logging: process.env.NODE_ENV === 'development',
         };
 
