@@ -33,7 +33,7 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  phone: string;
+  phoneNumber: string;
 
   @Column({ default: true })
   isActive: boolean;
