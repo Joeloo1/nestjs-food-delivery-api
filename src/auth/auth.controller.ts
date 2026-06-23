@@ -47,7 +47,10 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: 200, description: 'Access token returned, refresh token set in cookie' })
+  @ApiResponse({
+    status: 200,
+    description: 'Access token returned, refresh token set in cookie',
+  })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Request() req: any, @Res({ passthrough: true }) res: Response) {
     return this.authService.login(req.user, res);
@@ -56,7 +59,9 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @ApiCookieAuth('refresh_token')
-  @ApiOperation({ summary: 'Get a new access token using the refresh token cookie' })
+  @ApiOperation({
+    summary: 'Get a new access token using the refresh token cookie',
+  })
   @ApiResponse({ status: 200, description: 'New access token returned' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
   refresh(
