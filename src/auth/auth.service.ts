@@ -50,9 +50,7 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string, res: Response) {
-    const refreshSecret = this.configService.get<string>(
-      'config.JWT_REFRESH_SECRET',
-    );
+    const refreshSecret = this.configService.get<string>('jwt.refreshSecret');
 
     let payload: { sub: string };
     try {
@@ -89,18 +87,17 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('config.JWT_SECRET'),
-      expiresIn: (this.configService.get<string>('config.JWT_EXPIRES_IN') ??
+      secret: this.configService.get<string>('jwt.secret'),
+      expiresIn: (this.configService.get<string>('jwt.expiresIn') ??
         '15m') as any,
     });
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
       {
-        secret: this.configService.get<string>('config.JWT_REFRESH_SECRET'),
-        expiresIn: (this.configService.get<string>(
-          'config.JWT_REFRESH_EXPIRES_IN',
-        ) ?? '7d') as any,
+        secret: this.configService.get<string>('jwt.refreshSecret'),
+        expiresIn: (this.configService.get<string>('jwt.refreshExpiresIn') ??
+          '7d') as any,
       },
     );
 

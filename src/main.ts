@@ -2,12 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const cookieParser = require('cookie-parser');
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    abortOnError: false,
+  });
 
   app.use(cookieParser());
 
@@ -31,10 +32,10 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('config.Port', 3000);
+  const port = configService.get<number>('port', 3000);
 
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
+  // console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();
