@@ -5,6 +5,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
+import { HttpExceptionFilter } from './common/filter/httpException.filter';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     abortOnError: false,
@@ -19,6 +21,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Swagger set UP
   const config = new DocumentBuilder()
@@ -35,7 +39,7 @@ async function bootstrap() {
   const port = configService.get<number>('port', 3000);
 
   await app.listen(port);
-  // console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log(`Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();
