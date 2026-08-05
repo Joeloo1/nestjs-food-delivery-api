@@ -3,6 +3,9 @@ import * as dotenv from 'dotenv';
 import { User } from '../users/entities/user.entity';
 import { Driver } from '../users/entities/driver.entity';
 import { DriverLocation } from '../users/entities/driver-location.entity';
+import { Restaurant } from '../restaurant/entities/restaurant.entity';
+import { Category } from '../restaurant/entities/category.entity';
+import { MenuItem } from '../restaurant/entities/menu-items.entity';
 
 dotenv.config();
 
@@ -14,7 +17,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: [User, Driver, DriverLocation],
+  entities: [User, Driver, DriverLocation, Restaurant, Category, MenuItem],
 
   // Where generated migration files will live
   migrations: ['src/database/migrations/*.ts'],
