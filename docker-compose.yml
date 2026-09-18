@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: Food-delivery-backend-redis
+    container_name: Food-delivery-backend-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
