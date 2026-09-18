@@ -10,7 +10,20 @@ export class UpdateUserDto {
   @ApiPropertyOptional({ example: '+2348012345678' })
   @IsOptional()
   @IsString()
+  phoneNumber?: string;
+
+  @ApiPropertyOptional({
+    example: '+2348012345678',
+    description: 'Alias for phoneNumber',
+  })
+  @IsOptional()
+  @IsString()
   phone?: string;
+
+  @ApiPropertyOptional({ example: '123 Main St, Ikeja, Lagos' })
+  @IsOptional()
+  @IsString()
+  address?: string;
 
   @ApiPropertyOptional({ example: 'https://example.com/avatar.png' })
   @IsOptional()

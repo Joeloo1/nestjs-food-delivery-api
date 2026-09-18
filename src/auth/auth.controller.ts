@@ -7,6 +7,8 @@ import {
   Res,
   Req,
   UnauthorizedException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,11 +20,11 @@ import {
 } from '@nestjs/swagger';
 import type { Request as ExpressRequest, Response } from 'express';
 import { AuthService } from './auth.service';
-import { Public } from 'src/common/decorators/public.decorator';
+import { Public } from '../common/decorators/public.decorator';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 
 @ApiTags('Auth')
@@ -45,6 +47,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login with email and password' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({
@@ -58,6 +61,7 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   @ApiCookieAuth('refresh_token')
   @ApiOperation({
     summary: 'Get a new access token using the refresh token cookie',
@@ -74,6 +78,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout and clear the refresh token' })
   @ApiResponse({ status: 200, description: 'Logged out successfully' })

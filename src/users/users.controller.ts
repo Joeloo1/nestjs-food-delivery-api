@@ -1,4 +1,12 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  ForbiddenException,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,8 +16,8 @@ import {
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { User } from './entities/user.entity';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { User, UserRole } from './entities/user.entity';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -29,8 +37,16 @@ export class UsersController {
   @ApiOperation({ summary: 'Update a user by ID' })
   @ApiParam({ name: 'id', description: 'UUID of the user to update' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: User,
+  ) {
+    if (currentUser.id !== id && currentUser.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('You can only update your own profile');
+    }
     return this.usersService.update(id, updateUserDto);
   }
 }

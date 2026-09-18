@@ -64,7 +64,7 @@ export class Restaurant {
   @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
   rating: number;
 
-  @Column({ name: 'total-ratings', default: 0 })
+  @Column({ name: 'total_ratings', default: 0 })
   totalRating: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })

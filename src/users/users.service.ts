@@ -30,7 +30,7 @@ export class UsersService {
     }
     const user = this.userRepository.create({
       ...createUserDto,
-      role: UserRole.CUSTOMER,
+      role: createUserDto.role || UserRole.CUSTOMER,
     });
 
     return await this.userRepository.save(user);
@@ -79,6 +79,12 @@ export class UsersService {
         saltRounds,
       );
     }
+
+    if (updateUserDto.phone && !updateUserDto.phoneNumber) {
+      updateUserDto.phoneNumber = updateUserDto.phone;
+    }
+    delete updateUserDto.phone;
+    delete updateUserDto.profilePicture;
 
     Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
