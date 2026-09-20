@@ -55,7 +55,10 @@ export class AuthController {
     description: 'Access token returned, refresh token set in cookie',
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  login(@Request() req: any, @Res({ passthrough: true }) res: Response) {
+  login(
+    @Request() req: ExpressRequest & { user: User },
+    @Res({ passthrough: true }) res: Response,
+  ) {
     return this.authService.login(req.user, res);
   }
 
@@ -72,7 +75,10 @@ export class AuthController {
     @Req() req: ExpressRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.['refresh_token'];
+    const cookies = req.cookies as
+      | Record<string, string | undefined>
+      | undefined;
+    const refreshToken = cookies?.['refresh_token'];
     if (!refreshToken) throw new UnauthorizedException('Refresh token missing');
     return this.authService.refresh(refreshToken, res);
   }
