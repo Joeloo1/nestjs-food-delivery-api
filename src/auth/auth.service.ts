@@ -22,8 +22,8 @@ export class AuthService {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return null;
 
-    const { password: _, ...safeUser } = user as any;
-    return safeUser as User;
+    delete (user as Partial<User>).password;
+    return user;
   }
 
   async login(user: User, res: Response) {
@@ -88,16 +88,22 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('jwt.secret'),
-      expiresIn: (this.configService.get<string>('jwt.expiresIn') ??
-        '15m') as any,
+      expiresIn:
+        (this.configService.get<string>('jwt.expiresIn') as
+          | `${number}${'s' | 'm' | 'h' | 'd'}`
+          | number
+          | undefined) ?? '15m',
     });
 
     const refreshToken = this.jwtService.sign(
       { sub: user.id },
       {
         secret: this.configService.get<string>('jwt.refreshSecret'),
-        expiresIn: (this.configService.get<string>('jwt.refreshExpiresIn') ??
-          '7d') as any,
+        expiresIn:
+          (this.configService.get<string>('jwt.refreshExpiresIn') as
+            | `${number}${'s' | 'm' | 'h' | 'd'}`
+            | number
+            | undefined) ?? '7d',
       },
     );
 
