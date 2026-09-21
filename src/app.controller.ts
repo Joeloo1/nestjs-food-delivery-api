@@ -6,11 +6,6 @@ import { Public } from './common/decorators/public.decorator';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  // @Get()
-  // getHello(): string {
-  //   return this.appService.getHello();
-  // }
-  //
   @Public()
   @Get('/health')
   healthCheck(): string {
